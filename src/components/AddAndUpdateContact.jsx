@@ -1,17 +1,30 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import Modal from "./Modal"
 import { Formik, Form, Field } from "formik";
 import { db } from "../config/firebase";
+import { toast } from "react-toastify";
 
-const AddAndUpdateContact = ({ isOpen, onClose }) => {
+const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
     const addContact = async (contact) => {
         try {
             const contactRef = collection(db, "contacts")
             await addDoc(contactRef, contact)
+            onClose();
+            toast.success("Contact Added Succesfully");
         } catch (error) {
             console.log(error)
         }
-    }
+    };
+    const updateContact = async (contact, id) => {
+        try {
+            const contactRef = doc(db, "contacts", id)
+            await updateDoc(contactRef, contact)
+            onClose();
+            toast.success("Contact Updated Succesfully");
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
 
 
@@ -21,13 +34,16 @@ const AddAndUpdateContact = ({ isOpen, onClose }) => {
                 isOpen={isOpen}
                 onClose={onClose}
             >
-                <Formik initialValues={{
+                <Formik initialValues={isUpdate ? {
+                    name: contact.name,
+                    email: contact.email
+                } : {
                     name: "",
                     email: ""
                 }}
                     onSubmit={(values) => {
                         console.log(values);
-                        addContact(values);
+                        isUpdate ? updateContact(values, contact.id) : addContact(values);
                     }
                     }
                 >
@@ -41,7 +57,7 @@ const AddAndUpdateContact = ({ isOpen, onClose }) => {
                             <Field name="email" className="border h-10" />
                         </div>
                         <button className="bg-orange px-3 py-1.5 border  self-end">
-                            Add Contact
+                            {isUpdate ? "Update" : "Add"} Contact
                         </button>
                     </Form>
                 </Formik>
