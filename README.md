@@ -2,6 +2,8 @@
 
 The **Firebase Contact App** is a web application built using React, Vite, Tailwind CSS, and Firebase. This app allows users to manage their contacts by adding, updating, searching, and deleting contact entries. Additionally, the app provides real-time notifications to keep users informed of any changes made to their contacts.
 
+![Photo](/app-snap.png)
+
 ## Features
 
 - **Add Contact**: Users can easily add new contacts by providing contact information, such as name and email.
