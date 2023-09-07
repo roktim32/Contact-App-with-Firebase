@@ -1,8 +1,14 @@
 import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import Modal from "./Modal"
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { db } from "../config/firebase";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
+
+const contactSchemaValidation = Yup.object().shape({
+    name: Yup.string().required("Name is required!"),
+    email: Yup.string().email("Invalid Email").required("Email is required!")
+})
 
 const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
     const addContact = async (contact) => {
@@ -34,13 +40,15 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
                 isOpen={isOpen}
                 onClose={onClose}
             >
-                <Formik initialValues={isUpdate ? {
-                    name: contact.name,
-                    email: contact.email
-                } : {
-                    name: "",
-                    email: ""
-                }}
+                <Formik
+                    validationSchema={contactSchemaValidation}
+                    initialValues={isUpdate ? {
+                        name: contact.name,
+                        email: contact.email
+                    } : {
+                        name: "",
+                        email: ""
+                    }}
                     onSubmit={(values) => {
                         console.log(values);
                         isUpdate ? updateContact(values, contact.id) : addContact(values);
@@ -51,10 +59,16 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
                         <div className=" flex flex-col gap-1">
                             <label htmlFor="name">Name</label>
                             <Field name="name" className="border h-10" />
+                            <div className="text-red-500 text-xs">
+                                <ErrorMessage name="name" />
+                            </div>
                         </div>
                         <div className=" flex flex-col gap-1">
                             <label htmlFor="email">Email</label>
                             <Field name="email" className="border h-10" />
+                            <div className="text-red-500 text-xs">
+                                <ErrorMessage name="email" />
+                            </div>
                         </div>
                         <button className="bg-orange px-3 py-1.5 border  self-end">
                             {isUpdate ? "Update" : "Add"} Contact

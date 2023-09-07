@@ -9,6 +9,7 @@ import Modal from "./components/Modal";
 import AddAndUpdateContact from "./components/AddAndUpdateContact";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NotFoundContacts from "./components/NotFoundContacts";
 
 const App = () => {
 
@@ -76,9 +77,9 @@ const App = () => {
           </div>
           <AiFillPlusCircle onClick={onOpen} className="text-5xl text-white cursor-pointer" />
         </div>
-        <div className="mt-4 flex flex-col gap-4 ">
+        <div className="mt-4 flex flex-col gap-3 ">
           {
-            contacts.map((contact) =>
+            contacts.length <= 0 ? <NotFoundContacts /> : contacts.map((contact) =>
               (<ContactCard key={contact.id} contact={contact} />)
             )
           }
