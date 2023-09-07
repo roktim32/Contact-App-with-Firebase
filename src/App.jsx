@@ -42,7 +42,25 @@ const App = () => {
       }
     }
     getContacts();
-  }, [])
+  }, []);
+
+  const filterContacts = (e) => {
+    const value = e.target.value;
+    const contactsRef = collection(db, "contacts");
+    onSnapshot(contactsRef, (snapshot) => {
+      const contactLists = snapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data()
+        }
+      })
+
+      const filteredContacts = contactLists.filter((contact) => contact.name.toLowerCase().includes(value.toLowerCase()));
+
+      setContacts(filteredContacts);
+      return filteredContacts;
+    })
+  }
 
 
   return (
@@ -52,7 +70,9 @@ const App = () => {
         <div className="flex gap-2">
           <div className="flex realative items-center flex-grow">
             <FiSearch className="ml-1 absolute text-white text-3xl" />
-            <input type="text" className="pl-9 text-white flex-grow h-10 bg-transparent border border-white rounded-md" />
+            <input
+              onChange={filterContacts}
+              type="text" className="pl-9 text-white flex-grow h-10 bg-transparent border border-white rounded-md" />
           </div>
           <AiFillPlusCircle onClick={onOpen} className="text-5xl text-white cursor-pointer" />
         </div>
